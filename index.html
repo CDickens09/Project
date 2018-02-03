@@ -47,6 +47,18 @@
     </head>
 	
     <body>
+	
+	<!--Navigation bar for page-->
+	<div id="aninavigation-placeholder">
+	</div>
+	
+	<script>
+	$(function()
+	{
+		$("#aninavigation-placeholder").load("../aninavigation.html");
+	});
+	</script>
+	
 	<p class="input">
 		<label class="input" for="meanbox">Mean: </label>
 		<input class="input inputbox" type="text" id="meanbox" size="3" value="0"/>
@@ -184,21 +196,20 @@
 
 		d3.selectAll(".inputbox").on("input", function()
 		{
-			updateshade()
 			update(x, y)
+			updateshade()
 			colourpick(document.getElementById("colourpick").value)
 		});
 
 		d3.select("#axislockcheck").on("change", function()
 		{
-			
 			update(x, y)
+			updateshade()
 			colourpick(document.getElementById("colourpick").value)
 		});
 		
 		function update(x, y)
 		{
-			updateshade()
 			m = Number(d3.select("#meanbox").property("value"));
 			s = Number(d3.select("#stdevbox").property("value"));
 			if(!isNaN(m) && !isNaN(s) && s != 0)
@@ -569,5 +580,11 @@
 			document.getElementById('colourpick').value = jscolor;
 		}
 	</script>
+	
+	<footer class="w3-center w3-black">
+	<p>
+		<a href="http://www.lincoln.ac.uk/home/smp/" title="School Footer" target="_blank" class="w3-hover-text-blue">School of Mathematics and Physics</a>, University of Lincoln, UK
+	</p>
+	</footer>
 	</body>
 </html>
