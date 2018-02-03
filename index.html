@@ -233,7 +233,6 @@
 					.transition()
 					.attr("d", line);
 			}
-			updateshade();
 		}
 		
 		function updateshade()
@@ -272,7 +271,7 @@
 					.attr("d", line)
 					.style("fill", fill);
 				
-				if(d3.select("#axisscalecheck").property("checked"))
+				if(d3.select("#axisscalecheck").property("unchecked"))
 				{
 					data = get_data(m, s, x);
 					while(data[data.length-1].q > (ptz(lpercent / 100) * s + m))
