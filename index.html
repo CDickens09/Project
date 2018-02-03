@@ -1,42 +1,572 @@
 <!DOCTYPE html>
 <html>
     <head>
-		<title>Chris Dickens - 3rd Year Project</title>
 		<meta charset="utf-8">
+		<!--Sets width of window to equal the width of viewers device so no side scroll bar is necessary-->
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<link rel="stylesheet" href="https://chris14552249.github.io/Project/Style.css">
 		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="//d3js.org/d3.v3.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	</head>
+		<script src="https://chris14552249.github.io/Project/jscolor.js"></script>
+		<style>
+			.axis path, .axis line 
+			{
+				fill: none;
+				stroke: #000;
+				shape-rendering: crispEdges;
+			}
+			body 
+			{
+				background: white;
+			}
+			.input 
+			{
+				font-size: 14pt;
+				margin: 5px;
+			}
+			label 
+			{
+				display: inline-block; 
+				text-align: right;
+			}
+			.line 
+			{
+				fill: none;
+				stroke: steelblue;
+				stroke-width: 1.5px;
+			}
+			p.input 
+			{
+				text-align: center;
+			}
+		</style>
+    </head>
 	
     <body>
-	<div id="navigation-placeholder">
-	</div>
+	<p class="input">
+		<label class="input" for="meanbox">Mean: </label>
+		<input class="input inputbox" type="text" id="meanbox" size="3" value="0"/>
+		<label class="input" for="stdevbox">Standard deviation:</label>
+		<input class="input inputbox" type="text" id="stdevbox" size="3" value="1"/>
+		<label class="input" for="lpercentbox">Left shaded percentage:</label>
+		<input class="input inputbox" type="text" id="lpercentbox" size="3" value="10"/>
+		<label class="input" for="rpercentbox">Right shaded percentage:</label>
+		<input class="input inputbox" type="text" id="rpercentbox" size="3" value="10"/>
+		<input class="input inputbox" type="checkbox" id="axisscalecheck" value="lock" checked>Scale axes</input>
+		<button onclick="showcv()">Show critical values</button>
+		<label class="input" for="colourpick">Shade Colour:</label>
+		<button id="colourpick" class="jscolor {onFineChange:'colourpick(this)', value:'000000'}"></button>
+	</p>
+	
+	<p id="user">
+	</p>
+	
+	<p id="normal">
+	</p>
+	
 	<script>
-	$(function()
-	{
-		$("#navigation-placeholder").load("navigation.html");
-	});
-	</script>
-
-	<div>
-		<h1>Chris Dickens - 3rd Year Project</h1> 
-
-		<p>
-			*Temporary*
-		</p>
+		var margin = 
+		{
+			top: 20,
+			right: 20,
+			bottom: 30,
+			left: 50
+		},
+		width = innerWidth - 70,
+		height = innerHeight / 2 - 144;
+		base_mean = 0;
+		base_sigma = 1;
+		Z_MAX = 6;
+		z_limit = 4;
 		
-     </div>
+		var x = d3.scale.linear()
+			.range([0, width]);
 
-	<div id="footer-placeholder">
-	</div>
-	<script>
-	$(function()
-	{
-		$("#footer-placeholder").load("footer.html");
-	});
+		var y = d3.scale.linear()
+			.range([height, 0]);
+
+		var xAxis = d3.svg.axis()
+			.scale(x)
+			.orient("bottom");
+
+		var yAxis = d3.svg.axis()
+			.scale(y)
+			.orient("left");
+		
+		var svg = d3.select("#user")
+			.append("svg")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+			.append("g")
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		svg.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + height + ")")
+			.call(xAxis);
+
+		svg.append("g")
+			.attr("class", "y axis")
+			.call(yAxis);
+
+		svg.append("path")
+			.attr("class", "line")
+			.attr("id", "base_normal_curve")
+			
+		svg.append("path")
+			.attr("class", "line")
+			.attr("id", "percentl_normal_curve")
+			
+		svg.append("path")
+			.attr("class", "line")
+			.attr("id", "percentr_normal_curve")
+		
+		update(x, y);
+		
+		var xAxisf = d3.svg.axis()
+			.scale(x)
+			.orient("bottom");
+
+		var yAxisf = d3.svg.axis()
+			.scale(y)
+			.orient("left");
+		
+		var svg_fixed = d3.select("#normal")
+			.append("svg")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+			.append("g")
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		svg_fixed.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + height + ")")
+			.call(xAxisf);
+
+		svg_fixed.append("g")
+			.attr("class", "y axis")
+			.call(yAxisf);
+
+		svg_fixed.append("path")
+			.attr("class", "line")
+			.attr("id", "fixed_normal_curve")
+			
+		svg_fixed.append("path")
+			.attr("class", "line")
+			.attr("id", "percentfixedl_normal_curve")
+			
+		svg_fixed.append("path")
+			.attr("class", "line")
+			.attr("id", "percentfixedr_normal_curve")
+
+		updateshade();
+
+		data = get_data(0, 1, x)
+		update_x_axisf(x)
+		update_y_axisf(data, y)
+		var line = d3.svg.line()
+		.x(function(d) 
+		{
+			return x(d.q);
+		})
+		.y(function(d) 
+		{
+			return y(d.p);
+		});	
+		d3.select("#fixed_normal_curve")
+			.datum(data)
+			.transition()
+			.attr("d", line);
+
+		d3.selectAll(".inputbox").on("input", function()
+		{
+			updateshade()
+			update(x, y)
+			colourpick(document.getElementById("colourpick").value)
+		});
+
+		d3.select("#axislockcheck").on("change", function()
+		{
+			
+			update(x, y)
+			colourpick(document.getElementById("colourpick").value)
+		});
+		
+		function update(x, y)
+		{
+			updateshade()
+			m = Number(d3.select("#meanbox").property("value"));
+			s = Number(d3.select("#stdevbox").property("value"));
+			if(!isNaN(m) && !isNaN(s) && s != 0)
+			{
+				if(d3.select("#axisscalecheck").property("checked"))
+				{
+					update_x_axis(m, s, x);		
+				}
+
+				data = get_data(m, s, x);
+
+				if(d3.select("#axisscalecheck").property("checked"))
+				{
+					update_y_axis(data, m, s, y);
+				}
+
+				var line = d3.svg.line()
+					.x(function(d) 
+					{
+						return x(d.q);
+					})
+					.y(function(d) 
+					{
+						return y(d.p);
+					});	
+
+				d3.select("#base_normal_curve")
+					.datum(data)
+					.transition()
+					.attr("d", line);
+			}
+		}
+		
+		function updateshade()
+		{
+			m = Number(d3.select("#meanbox").property("value"));
+			s = Number(d3.select("#stdevbox").property("value"));
+			lpercent = Number(d3.select("#lpercentbox").property("value"));
+			rpercent = Number(d3.select("#rpercentbox").property("value"));
+			var fill = '#' + document.getElementById("colourpick").value;
+			
+			if(lpercent != 0)
+			{
+				data = get_data(m, s, x);
+				
+				var line = d3.svg.line()
+				.x(function(d) 
+				{
+					return x(d.q);
+				})
+				.y(function(d) 
+				{
+					return y(d.p);
+				});	
+				
+				while(data[data.length-1].q > (ptz(lpercent / 100) * s + m))
+				{
+					data.pop()
+				}
+				
+				data[0].p = 0.0;
+				data[data.length-1].p = 0.0;
+				
+				d3.select("#percentl_normal_curve")
+					.datum(data)
+					.transition()
+					.attr("d", line)
+					.style("fill", fill);
+				
+				if(d3.select("#axisscalecheck").property("checked"))
+				{
+					data = get_data(m, s, x);
+					while(data[data.length-1].q > (ptz(lpercent / 100) * s + m))
+					{
+						data.pop()
+					}
+				}
+				else
+				{
+					data = get_data(0, 1, x);
+					while(data[data.length-1].q > ptz(lpercent / 100))
+					{
+						data.pop()
+					}
+				}
+				
+				data[0].p = 0.0;
+				data[data.length-1].p = 0.0;
+				
+				d3.select("#percentfixedl_normal_curve")
+					.datum(data)
+					.transition()
+					.attr("d", line)
+					.style("fill", fill);
+			}
+			else
+			{
+				data = get_data(m, s ,x);
+				while(data.length > 1)
+				{
+					data.pop()
+				}
+				data[0].p = 0.0;
+				data[0].q = 0.0;
+				
+				d3.select("#percentl_normal_curve")
+					.datum(data)
+					.transition()
+					.attr("d", line)
+					.style("fill", fill);
+				
+				d3.select("#percentfixedl_normal_curve")
+					.datum(data)
+					.transition()
+					.attr("d", line)
+					.style("fill", fill);
+			}
+			if(rpercent != 0)
+			{
+				data = get_data(m, s, x);
+				
+				var line = d3.svg.line()
+				.x(function(d) 
+				{
+					return x(d.q);
+				})
+				.y(function(d) 
+				{
+					return y(d.p);
+				});	
+				
+				while(data[0].q < (ptz(1 - (rpercent / 100)) * s + m))
+				{
+					data.shift()
+				}
+				
+				data[0].p = 0.0;
+				data[data.length-1].p = 0.0;
+				
+				d3.select("#percentr_normal_curve")
+					.datum(data)
+					.transition()
+					.attr("d", line)
+					.style("fill", fill);
+				
+				if(d3.select("#axisscalecheck").property("checked"))
+				{
+					data = get_data(m, s, x);
+					while(data[0].q < (ptz(1 - (rpercent / 100)) * s + m))
+					{
+						data.shift()
+					}
+				}
+				else
+				{
+					data = get_data(0, 1, x);
+					while(data[0].q < ptz(1 - (rpercent / 100)))
+					{
+						data.shift()
+					}
+				}
+				
+				data[0].p = 0.0;
+				data[data.length-1].p = 0.0;
+				
+				d3.select("#percentfixedr_normal_curve")
+					.datum(data)
+					.transition()
+					.attr("d", line)
+					.style("fill", fill);
+			}
+			else
+			{
+				data = get_data(m, s ,x);
+				while(data.length > 1)
+				{
+					data.pop()
+				}
+				data[0].p = 0.0;
+				data[0].q = 0.0;
+				
+				d3.select("#percentr_normal_curve")
+					.datum(data)
+					.transition()
+					.attr("d", line)
+					.style("fill", fill);
+				
+				d3.select("#percentfixedr_normal_curve")
+					.datum(data)
+					.transition()
+					.attr("d", line)
+					.style("fill", fill);
+			}
+		}
+		function update_x_axis(m, s, x)
+		{
+			x.domain([m - (z_limit * s), m + (z_limit * s)]);
+			d3.select(".x").transition().call(xAxis);		
+		}
+		
+		function update_x_axisf(x)
+		{
+			x.domain([0 - (z_limit * 1), 0 + (z_limit * 1)]);
+			d3.select(".x").transition().call(xAxisf);		
+		}
+		
+		function update_y_axis(data, m, s, y)
+		{
+			y.domain(d3.extent(data, function(d) 
+			{
+				return d.p;
+			}));
+			d3.select(".y").transition().call(yAxis);
+		}
+		
+		function update_y_axisf(data, y)
+		{
+			y.domain(d3.extent(data, function(d) 
+			{
+				return d.p;
+			}));
+			d3.select(".y").transition().call(yAxisf);
+		}
+		
+		function get_data(mean, sigma, x)
+		{
+			data = [];
+
+			for (i = 0; i < width; i++) 
+			{
+				q = x.invert(i);
+				p = gaussian_pdf(q, mean, sigma);
+				el = {
+					"q": q,
+					"p": p
+				}
+				data.push(el);
+			};
+			return data 	
+		}
+
+		function gaussian_pdf(x, mean, sigma) 
+		{
+			var gaussianConstant = 1 / Math.sqrt(2 * Math.PI),
+			x = (x - mean) / sigma;
+			return gaussianConstant * Math.exp(-.5 * x * x) / sigma;
+		};
+		
+		function ztp(z) 
+		{
+			var y, x, w;
+
+			if (z == 0.0) 
+			{
+				x = 0.0;
+			} 
+			else 
+			{
+				y = 0.5 * Math.abs(z);
+				if (y > (Z_MAX * 0.5)) 
+				{
+					x = 1.0;
+				} 
+				else if (y < 1.0) 
+				{
+					w = y * y;
+					x = ((((((((0.000124818987 * w
+								- 0.001075204047) * w + 0.005198775019) * w
+								- 0.019198292004) * w + 0.059054035642) * w
+								- 0.151968751364) * w + 0.319152932694) * w
+								- 0.531923007300) * w + 0.797884560593) * y * 2.0;
+				} 
+				else 
+				{
+					y -= 2.0;
+					x = (((((((((((((-0.000045255659 * y
+									+ 0.000152529290) * y - 0.000019538132) * y
+									- 0.000676904986) * y + 0.001390604284) * y
+									- 0.000794620820) * y - 0.002034254874) * y
+									+ 0.006549791214) * y - 0.010557625006) * y
+									+ 0.011630447319) * y - 0.009279453341) * y
+									+ 0.005353579108) * y - 0.002141268741) * y
+									+ 0.000535310849) * y + 0.999936657524;
+				}
+			}
+			return z > 0.0 ? ((x + 1.0) * 0.5) : ((1.0 - x) * 0.5);
+		}
+
+		function ptz(p) 
+		{
+			var Z_EPSILON = 0.000001;     
+			var minz = -Z_MAX;
+			var maxz = Z_MAX;
+			var zval = 0.0;
+			var pval;
+			if( p < 0.0 ) p = 0.0;
+			if( p > 1.0 ) p = 1.0;
+
+			while ((maxz - minz) > Z_EPSILON) 
+			{
+				pval = ztp(zval);
+				if (pval > p) 
+				{
+					maxz = zval;
+				} 
+				else 
+				{
+					minz = zval;
+				}
+				zval = (maxz + minz) * 0.5;
+			}
+			return(zval);
+		}
+		
+		function showcv()
+		{
+			m = Number(d3.select("#meanbox").property("value"));
+			s = Number(d3.select("#stdevbox").property("value"));
+			lpercent = Number(d3.select("#lpercentbox").property("value"));
+			rpercent = Number(d3.select("#rpercentbox").property("value"));
+			
+			if(lpercent != 0)
+			{
+				var zluser = ptz(lpercent / 100) * s + m;
+				var zlnorm = ptz(lpercent / 100);
+			}
+			else
+			{
+				var zluser = "N/A"
+				var zlnorm = "N/A"
+			}
+			
+			if(rpercent != 0)
+			{
+				var zruser = ptz(1 - (rpercent / 100)) * s + m;
+				var zrnorm = ptz(1 - (rpercent / 100));
+			}
+			else
+			{
+				var zruser = "N/A"
+				var zrnorm = "N/A"
+			}
+			if(m != 0 || s != 1)
+			{
+				alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser +
+						"\n\nCritical value for the left tail with mean " + 0 + " and standard deviation " + 1 + " is: " + zlnorm +
+						"\n\nCritical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser +
+						"\n\nCritical value for the right tail with mean " + 0 + " and standard deviation " + 1 + " is: " + zrnorm)
+			}
+			else
+			{
+				alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser +
+						"\n\nCritical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser)
+			}
+		}
+		
+		function colourpick(jscolor)
+		{
+			fill = '#' + jscolor;
+			d3.select("#percentl_normal_curve")
+					.style("fill", fill);
+			d3.select("#percentr_normal_curve")
+					.style("fill", fill);
+			d3.select("#percentfixedl_normal_curve")
+					.style("fill", fill);
+			d3.select("#percentfixedr_normal_curve")
+					.style("fill", fill);
+			document.getElementById('colourpick').value = jscolor;
+		}
 	</script>
 	</body>
 </html>

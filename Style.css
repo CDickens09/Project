@@ -1,8 +1,29 @@
+a
+{
+	color: white;
+}
 body
 {
-	font-size: 20px;
+	font-size: 18px;
+}
+h1
+{
+	margin:10px;
+}
+h2
+{
+	margin: 10px;
+}
+.navbar
+{
+	margin-bottom:0px;
+}
+.navbar-inverse
+{
+	background-color: black;
+	border-color: black;
 }
 p
 {
-	margin: 5px 5px 5px 5px;
+	margin: 5px 0px 5px 10px;
 }
