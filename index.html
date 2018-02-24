@@ -69,9 +69,6 @@
 	<p id="user">
 	</p>
 	
-	<p id="normal">
-	</p>
-	
 	<script>
 		var margin = 
 		{
@@ -130,43 +127,6 @@
 			.attr("id", "percentr_normal_curve")
 		
 		update(x, y);
-		
-		var xAxisf = d3.svg.axis()
-			.scale(x)
-			.orient("bottom");
-
-		var yAxisf = d3.svg.axis()
-			.scale(y)
-			.orient("left");
-		
-		var svg_fixed = d3.select("#normal")
-			.append("svg")
-			.attr("width", width + margin.left + margin.right)
-			.attr("height", height + margin.top + margin.bottom)
-			.append("g")
-			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-		svg_fixed.append("g")
-			.attr("class", "x axis")
-			.attr("transform", "translate(0," + height + ")")
-			.call(xAxisf);
-
-		svg_fixed.append("g")
-			.attr("class", "y axis")
-			.call(yAxisf);
-
-		svg_fixed.append("path")
-			.attr("class", "line")
-			.attr("id", "fixed_normal_curve")
-			
-		svg_fixed.append("path")
-			.attr("class", "line")
-			.attr("id", "percentfixedl_normal_curve")
-			
-		svg_fixed.append("path")
-			.attr("class", "line")
-			.attr("id", "percentfixedr_normal_curve")
-
 		updateshade();
 
 		data = get_data(0, 1, x)
