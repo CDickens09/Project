@@ -212,8 +212,6 @@
 					.transition()
 					.attr("d", line)
 					.style("fill", fill);
-				
-
 			}
 			else
 			{
@@ -226,12 +224,6 @@
 				data[0].q = 0.0;
 				
 				d3.select("#percentl_normal_curve")
-					.datum(data)
-					.transition()
-					.attr("d", line)
-					.style("fill", fill);
-				
-				d3.select("#percentfixedl_normal_curve")
 					.datum(data)
 					.transition()
 					.attr("d", line)
@@ -264,32 +256,6 @@
 					.transition()
 					.attr("d", line)
 					.style("fill", fill);
-				
-				if(d3.select("#axisscalecheck").property("checked"))
-				{
-					data = get_data(m, s, x);
-					while(data[0].q < (ptz(1 - (rpercent / 100)) * s + m))
-					{
-						data.shift()
-					}
-				}
-				else
-				{
-					data = get_data(0, 1, x);
-					while(data[0].q < ptz(1 - (rpercent / 100)))
-					{
-						data.shift()
-					}
-				}
-				
-				data[0].p = 0.0;
-				data[data.length-1].p = 0.0;
-				
-				d3.select("#percentfixedr_normal_curve")
-					.datum(data)
-					.transition()
-					.attr("d", line)
-					.style("fill", fill);
 			}
 			else
 			{
@@ -306,24 +272,12 @@
 					.transition()
 					.attr("d", line)
 					.style("fill", fill);
-				
-				d3.select("#percentfixedr_normal_curve")
-					.datum(data)
-					.transition()
-					.attr("d", line)
-					.style("fill", fill);
 			}
 		}
 		function update_x_axis(m, s, x)
 		{
 			x.domain([m - (z_limit * s), m + (z_limit * s)]);
 			d3.select(".x").transition().call(xAxis);		
-		}
-		
-		function update_x_axisf(x)
-		{
-			x.domain([0 - (z_limit * 1), 0 + (z_limit * 1)]);
-			d3.select(".x").transition().call(xAxisf);		
 		}
 		
 		function update_y_axis(data, m, s, y)
@@ -333,15 +287,6 @@
 				return d.p;
 			}));
 			d3.select(".y").transition().call(yAxis);
-		}
-		
-		function update_y_axisf(data, y)
-		{
-			y.domain(d3.extent(data, function(d) 
-			{
-				return d.p;
-			}));
-			d3.select(".y").transition().call(yAxisf);
 		}
 		
 		function get_data(mean, sigma, x)
