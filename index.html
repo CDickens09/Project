@@ -213,31 +213,7 @@
 					.attr("d", line)
 					.style("fill", fill);
 				
-				if(d3.select("#axisscalecheck").property("checked"))
-				{
-					data = get_data(m, s, x);
-					while(data[data.length-1].q > (ptz(lpercent / 100) * s + m))
-					{
-						data.pop()
-					}
-				}
-				else
-				{
-					data = get_data(0, 1, x);
-					while(data[data.length-1].q > ptz(lpercent / 100))
-					{
-						data.pop()
-					}
-				}
-				
-				data[0].p = 0.0;
-				data[data.length-1].p = 0.0;
-				
-				d3.select("#percentfixedl_normal_curve")
-					.datum(data)
-					.transition()
-					.attr("d", line)
-					.style("fill", fill);
+
 			}
 			else
 			{
