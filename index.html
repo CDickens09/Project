@@ -469,21 +469,23 @@
 			{
 				var zluser = ptz(lpercent / 100) * s + m;
 			}
-			else
-			{
-				var zluser = "Please shade the left region";
-			}
-			
 			if(rpercent != 0)
 			{
 				var zruser = ptz(1 - (rpercent / 100)) * s + m;
 			}
-			else
-			{
-				var zruser = "Please shade the right region";
+			if (lpercent != 0 && rpercent != 0) {
+				alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser +
+					"\n\nCritical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser)
 			}
-			alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser +
-				"\n\nCritical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser)
+			else if (lpercent == 0 && rpercent != 0) {
+				alert("Critical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser)	
+			}
+			else if (lpercent != 0 && rpercent == 0) {
+				alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser)	
+			}
+			else {
+				alert("Please shade a region to find out the critical value)	
+			}
 		}
 		
 		function colourpick(jscolor)
