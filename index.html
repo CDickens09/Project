@@ -129,8 +129,8 @@
 
 		d3.selectAll(".inputbox").on("input", function()
 		{
-			update(x, y)
-			updateshade()
+			update(x, y);
+			updateshade();
 			colourpick(document.getElementById("colourpick").value);
 		});
 
@@ -158,8 +158,7 @@
 					.y(function(d) 
 					{
 						return y(d.p);
-					});	
-
+					});
 				d3.select("#base_normal_curve")
 					.datum(data)
 					.transition()
@@ -174,11 +173,9 @@
 			lpercent = Number(d3.select("#lpercentbox").property("value"));
 			rpercent = Number(d3.select("#rpercentbox").property("value"));
 			var fill = '#' + document.getElementById("colourpick").value;
-			
 			if(lpercent != 0)
 			{
 				data = get_data(m, s, x);
-				
 				var line = d3.svg.line()
 				.x(function(d) 
 				{
@@ -187,16 +184,13 @@
 				.y(function(d) 
 				{
 					return y(d.p);
-				});	
-				
+				});
 				while(data[data.length-1].q > (ptz(lpercent / 100) * s + m))
 				{
-					data.pop()
+					data.pop();
 				}
-				
 				data[0].p = 0.0;
 				data[data.length-1].p = 0.0;
-				
 				d3.select("#percentl_normal_curve")
 					.datum(data)
 					.transition()
@@ -208,11 +202,10 @@
 				data = get_data(m, s ,x);
 				while(data.length > 1)
 				{
-					data.pop()
+					data.pop();
 				}
 				data[0].p = 0.0;
 				data[0].q = 0.0;
-				
 				d3.select("#percentl_normal_curve")
 					.datum(data)
 					.transition()
@@ -222,7 +215,6 @@
 			if(rpercent != 0)
 			{
 				data = get_data(m, s, x);
-				
 				var line = d3.svg.line()
 				.x(function(d) 
 				{
@@ -232,15 +224,12 @@
 				{
 					return y(d.p);
 				});	
-				
 				while(data[0].q < (ptz(1 - (rpercent / 100)) * s + m))
 				{
-					data.shift()
+					data.shift();
 				}
-				
 				data[0].p = 0.0;
 				data[data.length-1].p = 0.0;
-				
 				d3.select("#percentr_normal_curve")
 					.datum(data)
 					.transition()
@@ -252,11 +241,10 @@
 				data = get_data(m, s ,x);
 				while(data.length > 1)
 				{
-					data.pop()
+					data.pop();
 				}
 				data[0].p = 0.0;
 				data[0].q = 0.0;
-				
 				d3.select("#percentr_normal_curve")
 					.datum(data)
 					.transition()
@@ -282,7 +270,6 @@
 		function get_data(mean, sigma, x)
 		{
 			data = [];
-
 			for (i = 0; i < width; i++) 
 			{
 				q = x.invert(i);
@@ -290,7 +277,7 @@
 				el = {
 					"q": q,
 					"p": p
-				}
+				};
 				data.push(el);
 			};
 			return data 	
@@ -306,7 +293,6 @@
 		function ztp(z) 
 		{
 			var y, x, w;
-
 			if (z == 0.0) 
 			{
 				x = 0.0;
@@ -352,7 +338,6 @@
 			var pval;
 			if( p < 0.0 ) p = 0.0;
 			if( p > 1.0 ) p = 1.0;
-
 			while ((maxz - minz) > Z_EPSILON) 
 			{
 				pval = ztp(zval);
@@ -375,7 +360,6 @@
 			s = Number(d3.select("#stdevbox").property("value"));
 			lpercent = Number(d3.select("#lpercentbox").property("value"));
 			rpercent = Number(d3.select("#rpercentbox").property("value"));
-			
 			if(lpercent != 0)
 			{
 				var zluser = ptz(lpercent / 100) * s + m;
@@ -386,16 +370,16 @@
 			}
 			if (lpercent != 0 && rpercent != 0) {
 				alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser +
-					"\n\nCritical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser)
+					"\n\nCritical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser);
 			}
 			else if (lpercent == 0 && rpercent != 0) {
-				alert("Critical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser)	
+				alert("Critical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser);	
 			}
 			else if (lpercent != 0 && rpercent == 0) {
-				alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser)	
+				alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser);	
 			}
 			else {
-				alert("Please shade a region to find out the critical value")	
+				alert("Please shade a region to find out the critical value");	
 			}
 		}
 		
