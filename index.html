@@ -56,9 +56,9 @@
 		<label class="input" for="stdevbox">Standard deviation:</label>
 		<input class="input inputbox" type="text" id="stdevbox" size="3" value="1"/>
 		<label class="input" for="lpercentbox">Left shaded percentage:</label>
-		<input class="input inputbox" type="text" id="lpercentbox" size="3" value="10"/>
+		<input class="input inputbox" type="text" id="lpercentbox" size="3" value="0"/>
 		<label class="input" for="rpercentbox">Right shaded percentage:</label>
-		<input class="input inputbox" type="text" id="rpercentbox" size="3" value="10"/>
+		<input class="input inputbox" type="text" id="rpercentbox" size="3" value="0"/>
 		<input class="input inputbox" type="checkbox" id="axisscalecheck" value="lock" checked>Scale axes</input>
 		<button onclick="showcv()">Show critical values</button>
 		<label class="input" for="colourpick">Shade Colour:</label>
@@ -468,23 +468,19 @@
 			if(lpercent != 0)
 			{
 				var zluser = ptz(lpercent / 100) * s + m;
-				var zlnorm = ptz(lpercent / 100);
 			}
 			else
 			{
-				var zluser = "N/A"
-				var zlnorm = "N/A"
+				var zluser = "Please shade the left region";
 			}
 			
 			if(rpercent != 0)
 			{
 				var zruser = ptz(1 - (rpercent / 100)) * s + m;
-				var zrnorm = ptz(1 - (rpercent / 100));
 			}
 			else
 			{
-				var zruser = "N/A"
-				var zrnorm = "N/A"
+				var zruser = "Please shade the right region";
 			}
 			alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser +
 				"\n\nCritical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser)
