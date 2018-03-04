@@ -3,7 +3,6 @@
     <head>
 		<title>Foundation Year - Normal Distribution</title>
 		<meta charset="utf-8">
-		<!--Sets width of window to equal the width of viewers device so no side scroll bar is necessary-->
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -78,7 +77,7 @@
 			left: 50
 		},
 		width = innerWidth - 70,
-		height = innerHeight / 2 - 144;
+		height = innerHeight - 144;
 		base_mean = 0;
 		base_sigma = 1;
 		Z_MAX = 6;
@@ -128,23 +127,6 @@
 		
 		update(x, y);
 		updateshade();
-
-		data = get_data(0, 1, x)
-		update_x_axisf(x)
-		update_y_axisf(data, y)
-		var line = d3.svg.line()
-		.x(function(d) 
-		{
-			return x(d.q);
-		})
-		.y(function(d) 
-		{
-			return y(d.p);
-		});	
-		d3.select("#fixed_normal_curve")
-			.datum(data)
-			.transition()
-			.attr("d", line);
 
 		d3.selectAll(".inputbox").on("input", function()
 		{
@@ -504,18 +486,8 @@
 				var zruser = "N/A"
 				var zrnorm = "N/A"
 			}
-			if(m != 0 || s != 1)
-			{
-				alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser +
-						"\n\nCritical value for the left tail with mean " + 0 + " and standard deviation " + 1 + " is: " + zlnorm +
-						"\n\nCritical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser +
-						"\n\nCritical value for the right tail with mean " + 0 + " and standard deviation " + 1 + " is: " + zrnorm)
-			}
-			else
-			{
-				alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser +
-						"\n\nCritical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser)
-			}
+			alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser +
+				"\n\nCritical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser)
 		}
 		
 		function colourpick(jscolor)
@@ -524,10 +496,6 @@
 			d3.select("#percentl_normal_curve")
 					.style("fill", fill);
 			d3.select("#percentr_normal_curve")
-					.style("fill", fill);
-			d3.select("#percentfixedl_normal_curve")
-					.style("fill", fill);
-			d3.select("#percentfixedr_normal_curve")
 					.style("fill", fill);
 			document.getElementById('colourpick').value = jscolor;
 		}
