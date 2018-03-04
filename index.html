@@ -59,7 +59,6 @@
 		<input class="input inputbox" type="text" id="lpercentbox" size="3" value="0"/>
 		<label class="input" for="rpercentbox">Right shaded percentage:</label>
 		<input class="input inputbox" type="text" id="rpercentbox" size="3" value="0"/>
-		<input class="input inputbox" type="checkbox" id="axisscalecheck" value="lock" checked>Scale axes</input>
 		<button onclick="showcv()">Show critical values</button>
 		<label class="input" for="colourpick">Shade Colour:</label>
 		<button id="colourpick" class="jscolor {onFineChange:'colourpick(this)', value:'000000'}"></button>
@@ -148,18 +147,9 @@
 			s = Number(d3.select("#stdevbox").property("value"));
 			if(!isNaN(m) && !isNaN(s) && s != 0)
 			{
-				if(d3.select("#axisscalecheck").property("checked"))
-				{
-					update_x_axis(m, s, x);		
-				}
-
+				update_x_axis(m, s, x);		
 				data = get_data(m, s, x);
-
-				if(d3.select("#axisscalecheck").property("checked"))
-				{
-					update_y_axis(data, m, s, y);
-				}
-
+				update_y_axis(data, m, s, y);
 				var line = d3.svg.line()
 					.x(function(d) 
 					{
