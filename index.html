@@ -4,14 +4,14 @@
 		<title>Foundation Year - Normal Distribution</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-		<link rel="stylesheet" href="https://chris14552249.github.io/Project/Style.css">
-		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-		<script src="//d3js.org/d3.v3.min.js"></script>
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> // Imports style sheet to use as deafult
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> // Imports style sheet to give some extra display style options
+		<link rel="stylesheet" href="https://chris14552249.github.io/Project/Style.css"> // Imports style sheet which i have added some other style attributes to
+		<script src="https://code.jquery.com/jquery-1.10.2.js"></script> // Imports jquery scripts for some useful functions
+		<script src="//d3js.org/d3.v3.min.js"></script> // Imports d3 library for plotting tools and functions
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-		<script src="https://chris14552249.github.io/Project/jscolor.js"></script>
-		<style>
+		<script src="https://chris14552249.github.io/Project/jscolor.js"></script> // Imports the jscolor script for the colour picker
+		<style> // Style section defines display characteristics of identifiers to be called later
 			.axis path, .axis line 
 			{
 				fill: none;
@@ -46,11 +46,11 @@
     </head>
 	
     <body>
-	<script>
+	<script> // Script to resize the animation if the user adjusts the size of the browser
 		window.onresize = function(){ location.reload(); }
 	</script>
 	
-	<p class="input">
+	<p class="input"> // Section to display all the required input text and boxes
 		<label class="input" for="meanbox">Mean: </label>
 		<input class="input inputbox" type="text" id="meanbox" size="3" value="0"/>
 		<label class="input" for="stdevbox">Standard deviation:</label>
@@ -64,7 +64,7 @@
 		<button id="colourpick" class="jscolor {onFineChange:'colourpick(this)', value:'000000'}"></button>
 	</p>
 	
-	<p id="user">
+	<p id="user"> // Section to tell the script where to put the animation
 	</p>
 	
 	<script>
@@ -74,39 +74,39 @@
 			right: 20,
 			bottom: 30,
 			left: 75
-		};
-		width = innerWidth - 70;
-		height = innerHeight - 144;
-		base_mean = 0;
+		}; // Defines page margins for the animation so it isnt right on the edge of the screen
+		width = innerWidth - 70; // Sets the width that the animation can use
+		height = innerHeight - 144; // Sets the height that the animation can use
+		base_mean = 0; // Declares and initialises variable for later use
 		base_sigma = 1;
 		Z_MAX = 6;
 		z_limit = 4;
 		
 		var x = d3.scale.linear()
-			.range([0, width]);
+			.range([0, width]); // Uses a d3 scale function to generate the values on the x axis
 
 		var y = d3.scale.linear()
-			.range([height, 0]);
+			.range([height, 0]); 
 
 		var xAxis = d3.svg.axis()
 			.scale(x)
-			.orient("bottom");
+			.orient("bottom"); // Uses a d3 function to create x axis from the previously made scale
 
 		var yAxis = d3.svg.axis()
 			.scale(y)
 			.orient("left");
 		
-		var svg = d3.select("#user")
+		var svg = d3.select("#user") 
 			.append("svg")
 			.attr("width", width + margin.left + margin.right)
 			.attr("height", height + margin.top + margin.bottom)
 			.append("g")
-			.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")"); // Defines where to append the svg element on the webpage
 
 		svg.append("g")
 			.attr("class", "x axis")
 			.attr("transform", "translate(0," + height + ")")
-			.call(xAxis);
+			.call(xAxis); // Adds the x axis visually to the plot
 
 		svg.append("g")
 			.attr("class", "y axis")
@@ -114,42 +114,35 @@
 
 		svg.append("path")
 			.attr("class", "line")
-			.attr("id", "base_normal_curve");
+			.attr("id", "base_normal_curve"); // Adds the path (data line) to the plot
 			
 		svg.append("path")
 			.attr("class", "line")
-			.attr("id", "percentl_normal_curve");
+			.attr("id", "percentl_normal_curve"); // Adds the shaded portion to the plot
 			
 		svg.append("path")
 			.attr("class", "line")
 			.attr("id", "percentr_normal_curve");
 		
-		update(x, y);
-		updateshade();
+		update(x, y); // Function call to perform the intial plot of the normal distribution
+		updateshade(); // Function call to add the default shade (At the moment 0 on both sides)
 
 		d3.selectAll(".inputbox").on("input", function()
 		{
 			update(x, y);
 			updateshade();
 			colourpick(document.getElementById("colourpick").value);
-		});
+		}); // Function to call the updates whenever something is changed in an input box
 
-		d3.select("#axislockcheck").on("change", function()
-		{
-			update(x, y);
-			updateshade();
-			colourpick(document.getElementById("colourpick").value);
-		});
-		
 		function update(x, y)
 		{
-			m = Number(d3.select("#meanbox").property("value"));
+			m = Number(d3.select("#meanbox").property("value")); // Retrieves the mean element from the desired input box
 			s = Number(d3.select("#stdevbox").property("value"));
 			if(!isNaN(m) && !isNaN(s) && s != 0)
 			{
-				update_x_axis(m, s, x);		
-				data = get_data(m, s, x);
-				update_y_axis(data, m, s, y);
+				update_x_axis(m, s, x);	// Calls function to update the axis
+				data = get_data(m, s, x); // Retrieves the y coordiantes for each x value
+				update_y_axis(data, m, s, y); // Updates the y axis with all the new data points
 				var line = d3.svg.line()
 					.x(function(d) 
 					{
@@ -158,25 +151,25 @@
 					.y(function(d) 
 					{
 						return y(d.p);
-					});
+					}); // Changes the line values of the path to plot a smooth curve of the data
 				d3.select("#base_normal_curve")
 					.datum(data)
 					.transition()
-					.attr("d", line);
+					.attr("d", line); // Adjusts the data displayed on screen to match new calculation
 			}
-		}
+		} // Update function which can be called to update the path (data line) on the plot
 		
 		function updateshade()
 		{
-			m = Number(d3.select("#meanbox").property("value"));
+			m = Number(d3.select("#meanbox").property("value")); // Retrieves the mean element from the desired input box
 			s = Number(d3.select("#stdevbox").property("value"));
 			lpercent = Number(d3.select("#lpercentbox").property("value"));
 			rpercent = Number(d3.select("#rpercentbox").property("value"));
-			var fill = '#' + document.getElementById("colourpick").value;
-			if(lpercent != 0)
+			var fill = '#' + document.getElementById("colourpick").value; // Selects the fill colour from the currently selected option on the colour picker
+			if(lpercent != 0) // Only runs if left shaded percentage isnt set to 0
 			{
-				data = get_data(m, s, x);
-				var line = d3.svg.line()
+				data = get_data(m, s, x); // Retrieves the y coordiantes for each x value
+				var line = d3.svg.line() // Defines a d3 line element
 				.x(function(d) 
 				{
 					return x(d.q);
@@ -184,38 +177,38 @@
 				.y(function(d) 
 				{
 					return y(d.p);
-				});
+				}); // Changes the line values of the path to plot a smooth curve of the data
 				while(data[data.length-1].q > (ptz(lpercent / 100) * s + m))
 				{
 					data.pop();
-				}
-				data[0].p = 0.0;
+				} // Removes unnecessary data which is larger than the required percentage of the data
+				data[0].p = 0.0; // Adds 0 point for start of data
 				data[data.length-1].p = 0.0;
 				d3.select("#percentl_normal_curve")
 					.datum(data)
 					.transition()
 					.attr("d", line)
-					.style("fill", fill);
+					.style("fill", fill); // Appends new data to plot to be displayed
 			}
-			else
+			else // Runs if left percentage is set to 0 to remove shading
 			{
-				data = get_data(m, s ,x);
+				data = get_data(m, s ,x); // Retrieves the y coordiantes for each x value
 				while(data.length > 1)
 				{
 					data.pop();
-				}
+				} // Removes all data
 				data[0].p = 0.0;
 				data[0].q = 0.0;
 				d3.select("#percentl_normal_curve")
 					.datum(data)
 					.transition()
 					.attr("d", line)
-					.style("fill", fill);
+					.style("fill", fill); // Appends blank data to remove any previous shading
 			}
-			if(rpercent != 0)
+			if(rpercent != 0) // Only runs if right shaded percentage isnt set to 0
 			{
-				data = get_data(m, s, x);
-				var line = d3.svg.line()
+				data = get_data(m, s, x); // Retrieves the y coordiantes for each x value
+				var line = d3.svg.line()  // Defines a d3 line element
 				.x(function(d) 
 				{
 					return x(d.q);
@@ -223,11 +216,11 @@
 				.y(function(d) 
 				{
 					return y(d.p);
-				});	
+				}); // Changes the line values of the path to plot a smooth curve of the data
 				while(data[0].q < (ptz(1 - (rpercent / 100)) * s + m))
 				{
 					data.shift();
-				}
+				}  // Removes unnecessary data which is smaller than the required percentage of the data
 				data[0].p = 0.0;
 				data[data.length-1].p = 0.0;
 				d3.select("#percentr_normal_curve")
@@ -236,26 +229,27 @@
 					.attr("d", line)
 					.style("fill", fill);
 			}
-			else
+			else // Runs if left percentage is set to 0 to remove shading
 			{
-				data = get_data(m, s ,x);
+				data = get_data(m, s ,x); // Retrieves the y coordiantes for each x value
 				while(data.length > 1)
 				{
 					data.pop();
-				}
+				} // Removes all data
 				data[0].p = 0.0;
 				data[0].q = 0.0;
 				d3.select("#percentr_normal_curve")
 					.datum(data)
 					.transition()
 					.attr("d", line)
-					.style("fill", fill);
+					.style("fill", fill); // Appends blank data to remove any previous shading
 			}
-		}
-		function update_x_axis(m, s, x)
+		} // Update function which can be called to update the shade on both sides of the plot
+		
+		function update_x_axis(m, s, x) // Function to update the x axis
 		{
-			x.domain([m - (z_limit * s), m + (z_limit * s)]);
-			d3.select(".x").transition().call(xAxis);		
+			x.domain([m - (z_limit * s), m + (z_limit * s)]); // Caluclates the new axis values to display
+			d3.select(".x").transition().call(xAxis); // Updates the displayed axis
 		}
 		
 		function update_y_axis(data, m, s, y)
@@ -267,37 +261,37 @@
 			d3.select(".y").transition().call(yAxis);
 		}
 		
-		function get_data(mean, sigma, x)
+		function get_data(mean, sigma, x) // Function to calculate y value from given x value, mean and standard deviation
 		{
-			data = [];
-			for (i = 0; i < width; i++) 
+			data = []; // Defines array to store the data values
+			for (i = 0; i < width; i++)  // For loop to create a data point for each pixel in width of the display screen
 			{
 				q = x.invert(i);
-				p = gaussian_pdf(q, mean, sigma);
+				p = gaussian_pdf(q, mean, sigma); // Calls the gaussian function
 				el = {
 					"q": q,
 					"p": p
 				};
-				data.push(el);
+				data.push(el); // Pushes el to the data array
 			};
-			return data 	
+			return data; // Returns the data back from the function
 		}
 
-		function gaussian_pdf(x, mean, sigma) 
+		function gaussian_pdf(x, mean, sigma) // Function to calculate where a point should be in a gaussian distribution from x coordinate, mean and standard deviation
 		{
 			var gaussianConstant = 1 / Math.sqrt(2 * Math.PI),
-			x = (x - mean) / sigma;
-			return gaussianConstant * Math.exp(-.5 * x * x) / sigma;
+			x = (x - mean) / sigma; // Defines variables for calculation
+			return gaussianConstant * Math.exp(-.5 * x * x) / sigma; // Returns calculated y value
 		};
 		
-		function ztp(z) 
+		function ztp(z) // Function to calculate a probability from critical value, this was taken from a discussion on Stack overflow (https://stackoverflow.com/questions/36575743/how-do-i-convert-probability-into-z-score)
 		{
-			var y, x, w;
+			var y, x, w; // Decalres the 3 necessary variables
 			if (z == 0.0) 
 			{
 				x = 0.0;
 			} 
-			else 
+			else
 			{
 				y = 0.5 * Math.abs(z);
 				if (y > (Z_MAX * 0.5)) 
@@ -325,20 +319,20 @@
 									+ 0.005353579108) * y - 0.002141268741) * y
 									+ 0.000535310849) * y + 0.999936657524;
 				}
-			}
-			return z > 0.0 ? ((x + 1.0) * 0.5) : ((1.0 - x) * 0.5);
+			} // Calculates the probaility from a given critical value using known values
+			return z > 0.0 ? ((x + 1.0) * 0.5) : ((1.0 - x) * 0.5); // Return statement to return the desired probability
 		}
 
-		function ptz(p) 
+		function ptz(p) // Function to calculate critical values from a probability, this was taken from a discussion on Stack overflow (https://stackoverflow.com/questions/36575743/how-do-i-convert-probability-into-z-score)
 		{
-			var Z_EPSILON = 0.000001;     
+			var Z_EPSILON = 0.000001; // Declares and initialises necessary variables
 			var minz = -Z_MAX;
 			var maxz = Z_MAX;
 			var zval = 0.0;
 			var pval;
-			if( p < 0.0 ) p = 0.0;
+			if( p < 0.0 ) p = 0.0; // If statement to ensure probability is returned negative
 			if( p > 1.0 ) p = 1.0;
-			while ((maxz - minz) > Z_EPSILON) 
+			while ((maxz - minz) > Z_EPSILON) // While loop to run until the z value has been converged to an accuracy of epsillon
 			{
 				pval = ztp(zval);
 				if (pval > p) 
@@ -351,46 +345,46 @@
 				}
 				zval = (maxz + minz) * 0.5;
 			}
-			return(zval);
+			return(zval); // Returns calculated z value
 		}
 		
-		function showcv()
+		function showcv() // Function to show critical values to user in a pop up window
 		{
-			m = Number(d3.select("#meanbox").property("value"));
+			m = Number(d3.select("#meanbox").property("value"));  // Retrieves the mean element from the desired input box
 			s = Number(d3.select("#stdevbox").property("value"));
 			lpercent = Number(d3.select("#lpercentbox").property("value"));
 			rpercent = Number(d3.select("#rpercentbox").property("value"));
-			if(lpercent != 0)
+			if(lpercent != 0) // If loop to calculate the critical z value on left shaded region if it isnt set to 0%
 			{
 				var zluser = ptz(lpercent / 100) * s + m;
 			}
-			if(rpercent != 0)
+			if(rpercent != 0) // If loop to calculate the critical z value on right shaded region if it isnt set to 0%
 			{
 				var zruser = ptz(1 - (rpercent / 100)) * s + m;
 			}
 			if (lpercent != 0 && rpercent != 0) {
 				alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser +
 					"\n\nCritical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser);
-			}
+			} // Statement to return the critical values of both sides of the shaded distribution
 			else if (lpercent == 0 && rpercent != 0) {
 				alert("Critical value for the right tail with mean " + m + " and standard deviation " + s + " is: " + zruser);	
-			}
+			}  // Statement to return right critical value if left side doesnt have shading
 			else if (lpercent != 0 && rpercent == 0) {
 				alert("Critical value for the left tail with mean " + m + " and standard deviation " + s + " is: " + zluser);	
-			}
+			} // Statement to return left critical value if right side doesnt have shading
 			else {
 				alert("Please shade a region to find out the critical value");	
-			}
+			} // Statement to return error if neither side has a shaded region to return values for
 		}
 		
-		function colourpick(jscolor)
+		function colourpick(jscolor) // Function to apply chosen colour
 		{
-			fill = '#' + jscolor;
+			fill = '#' + jscolor; // Selects fill colour based on jscolor picker script
 			d3.select("#percentl_normal_curve")
-					.style("fill", fill);
+					.style("fill", fill); // Shades left side of distribution up to percentage
 			d3.select("#percentr_normal_curve")
-					.style("fill", fill);
-			document.getElementById('colourpick').value = jscolor;
+					.style("fill", fill); // Shades right side of distribution up to percentage
+			document.getElementById('colourpick').value = jscolor; // Sets colour variable for use in other functions
 		}
 	</script>
 	</body>
